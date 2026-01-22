@@ -1,0 +1,13 @@
+{
+    "env": ".env",
+    "jql": "project = HA7236VAL AND assignee = currentUser() AND status IN (Open, Reopened) AND priority != Note",
+    "clone_project_key": "EUSW",
+    "clone_label": [
+        "HA7236B_DVf"
+    ],
+    "due_date": "2025-10-17",
+    "issue_type": "Bug",
+    "clone_models": [
+        "HA7236B"
+    ]
+}

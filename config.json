@@ -1,0 +1,10 @@
+{
+    "env": ".env",
+    "jql": "project = HP920 AND status IN (Open, Reopened) AND summary ~ \"\\[SXEP210W\\]\" ORDER BY created DESC",
+    "clone_project_key": "JPNSW",
+    "clone_label": [
+        "HP920_SYNC"
+    ],
+    "due_date": "2025-08-29",
+    "issue_type": "Bug"
+}

@@ -1,0 +1,13 @@
+{
+    "env": ".env",
+    "jql": "project = XP31SE AND assignee = currentUser() AND labels = SW_010001  AND status IN (Open, Reopened) AND priority != Note",
+    "clone_project_key": "JPNSW",
+    "clone_label": [
+        "XP31SE_SW_010001"
+    ],
+    "due_date": "2W",
+    "issue_type": "Bug",
+    "clone_models": [
+        "XP31SE"
+    ]
+}
