@@ -255,8 +255,8 @@ class JiraClient:
         if labels:
             fields["labels"] = labels
 
-        #if models:
-        #    fields["model(s)"] = models
+        if models:
+            fields["customfield_10035"] = [{"value": m} for m in models]
 
         payload = json.dumps({"fields": fields})
         response = requests.post(url, headers=self.headers, auth=self.auth, data=payload)  # [KO] 이슈 생성 요청 / [EN] Send create request
