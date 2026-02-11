@@ -1,0 +1,13 @@
+{
+    "env": ".env",
+    "jql": "project = SXEP210W AND assignee = currentUser() AND labels = sw_eco_2nd AND status IN (Open, Reopened) AND priority != Note",
+    "clone_project_key": "JPNSW",
+    "clone_label": [
+        "HP920_ECO_2nd"
+    ],
+    "due_date": "2W",
+    "issue_type": "Bug",
+    "clone_models": [
+        "HP920"
+    ]
+}

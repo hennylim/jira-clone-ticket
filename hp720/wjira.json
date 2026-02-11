@@ -1,0 +1,13 @@
+{
+    "env": ".env",
+    "jql": "project = 'HP720' AND assignee = currentUser() AND status IN (Open, Reopened) AND (summary ~ 'SXEP200W' or summary ~ 'SXEP200W')  ORDER BY created DESC",
+    "clone_project_key": "JPNSW",
+    "clone_label": [
+        "HP720_SYNC"
+    ],
+    "due_date": "2W",
+    "issue_type": "Bug",
+    "clone_models": [
+        "HP720"
+    ]
+}
