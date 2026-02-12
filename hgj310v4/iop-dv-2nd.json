@@ -3,7 +3,7 @@
     "jql": "project = HGJ310V4VA AND (labels =DV and labels= 2nd) AND assignee = currentUser() AND status IN (Open, Reopened) AND priority != Note",
     "clone_project_key": "CICSW",
     "clone_label": [
-        "HGJ310V4_DV2nd"
+        "HGJ310V4_OS6p6_DV2nd"
     ],
     "due_date": "2W",
     "issue_type": "Bug",
