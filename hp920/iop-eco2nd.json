@@ -9,5 +9,6 @@
     "issue_type": "Bug",
     "clone_models": [
         "HP920"
-    ]
+    ],
+    "parent_key": "JPNSW-2758"
 }

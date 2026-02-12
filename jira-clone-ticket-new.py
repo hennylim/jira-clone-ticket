@@ -161,6 +161,8 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--issue_type', type=str, help='Bug/Task')
     # Single issue clone mode: provide a single issue key
     parser.add_argument('-k', '--issue_key', type=str, help='단일 원본 이슈 키 (예: PROJ-123)')
+    parser.add_argument('-pk', '--parent_key', type=str, help='상위 이슈 키 (예: PROJ-123)')
+
 
     args = parser.parse_args()
 
@@ -198,6 +200,7 @@ if __name__ == "__main__":
         clone_models = config.get('clone_models')
         if isinstance(clone_models, str):
             clone_models = [label for label in clone_models.split() if label]
+    parent_key = args.parent_key if args.parent_key else config.get('parent_key')
 
     # due_date가 숫자+W 경우 숫자와 문자를 분리
     due_date_tmp = 0
@@ -304,7 +307,8 @@ if __name__ == "__main__":
                                 issue_type=issue_type,
                                 due_date=due_date,
                                 labels=clone_label,
-                                models=clone_models
+                                models=clone_models,
+                                parent_key=parent_key
                             )
             if not new_issue_key:
                 print(f"Warning: {summary} - {org_key} 생성 실패")

@@ -91,7 +91,7 @@ class JiraClient:
         issuetypes = projects[0].get("issuetypes", [])
         return [{"id": it.get("id"), "name": it.get("name")} for it in issuetypes if it]
 
-    def create_issue(self, project_key, summary, issue_type, description=None, due_date=None, labels=None, linked_issue_key=None, models=None):
+    def create_issue(self, project_key, summary, issue_type, description=None, due_date=None, labels=None, linked_issue_key=None, models=None, parent_key=None):
         """
         [KO] Jira 이슈를 생성하고, 필요 시 기존 이슈의 설명/첨부/링크를 복제합니다.
         - description이 비어 있고 linked_issue_key가 주어지면, 원본 이슈의 설명(ADF 또는 일반 텍스트)을 안전하게 반영합니다.
@@ -248,15 +248,23 @@ class JiraClient:
             "description": use_description_on_create if use_description_on_create else None
         }
 
+        print(f"resolved_issuetype: {resolved_issuetype}")
+
         # [KO] 선택적 필드: 마감일 / [EN] Optional: due date
         if due_date:
             fields["duedate"] = due_date
+
         # [KO] 선택적 필드: 라벨 / [EN] Optional: labels
         if labels:
             fields["labels"] = labels
 
         if models:
             fields["customfield_10035"] = [{"value": m} for m in models]
+
+        # [KO] 상위 항목(Epic 또는 Parent) 설정
+        # Jira Cloud API v3에서는 상위 이슈(에픽 포함)를 'parent' 필드에 'key'로 넣습니다.
+        if parent_key:
+            fields["parent"] = {"key": parent_key}
 
         payload = json.dumps({"fields": fields})
         response = requests.post(url, headers=self.headers, auth=self.auth, data=payload)  # [KO] 이슈 생성 요청 / [EN] Send create request
@@ -606,7 +614,7 @@ class JiraClient:
                 transformed['content'].append(attachments_list)
         return transformed
 
-    def clone_issue_with_media_upload(self, source_issue_key, project_key, summary=None, issue_type="Task", due_date=None, labels=None, link_type="Relates", models=None):
+    def clone_issue_with_media_upload(self, source_issue_key, project_key, summary=None, issue_type="Task", due_date=None, labels=None, link_type="Relates", models=None, parent_key=None):
         """
         [KO] 원본 이슈의 설명/첨부/링크를 보존하며 새 이슈를 생성합니다.
         - 생성 시에는 텍스트-only ADF로 안전하게 생성하고, 이후 media 노드를 첨부 링크로 변환하여 설명을 업데이트합니다.
@@ -630,7 +638,8 @@ class JiraClient:
             due_date=due_date,
             labels=labels,
             linked_issue_key=source_issue_key,
-            models = models
+            models = models,
+            parent_key=parent_key
         )
         if not new_issue_key:
             return None
