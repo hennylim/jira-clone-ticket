@@ -263,8 +263,8 @@ class JiraClient:
 
         # [KO] 상위 항목(Epic 또는 Parent) 설정
         # Jira Cloud API v3에서는 상위 이슈(에픽 포함)를 'parent' 필드에 'key'로 넣습니다.
-        if parent_key:
-            fields["parent"] = {"key": parent_key}
+        #if parent_key:
+        #    fields["parent"] = {"key": parent_key}
 
         payload = json.dumps({"fields": fields})
         response = requests.post(url, headers=self.headers, auth=self.auth, data=payload)  # [KO] 이슈 생성 요청 / [EN] Send create request
