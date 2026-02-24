@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Jira Clone Ticket Web UI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Jira Clone Ticket Web UI</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="config_file" class="form-label">설정 파일(config.json) 업로드</label>
+            <input type="file" class="form-control" id="config_file" name="config_file" accept="application/json">
+        </div>
+        <div class="mb-3">
+            <label for="jql" class="form-label">JQL</label>
+            <input type="text" class="form-control" id="jql" name="jql" placeholder="project = SI" value="{{ form_data['jql'] if form_data and 'jql' in form_data else '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="issue_key" class="form-label">이슈 키 (단일)</label>
+            <input type="text" class="form-control" id="issue_key" name="issue_key" placeholder="PROJ-123" value="{{ form_data['issue_key'] if form_data and 'issue_key' in form_data else '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="clone_project_key" class="form-label">Clone Project Key</label>
+            <input type="text" class="form-control" id="clone_project_key" name="clone_project_key" required value="{{ form_data['clone_project_key'] if form_data and 'clone_project_key' in form_data else '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="clone_label" class="form-label">Clone Label (공백구분)</label>
+            <input type="text" class="form-control" id="clone_label" name="clone_label" required value="{{ ' '.join(form_data['clone_label']) if form_data and 'clone_label' in form_data and form_data['clone_label'] is iterable and not string and form_data['clone_label'] else (form_data['clone_label'] if form_data and 'clone_label' in form_data else '') }}">
+        </div>
+        <div class="mb-3">
+            <label for="due_date" class="form-label">Due Date (YYYY-MM-DD, nW, nD)</label>
+            <input type="text" class="form-control" id="due_date" name="due_date" required value="{{ form_data['due_date'] if form_data and 'due_date' in form_data else '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="issue_type" class="form-label">이슈 타입</label>
+            <input type="text" class="form-control" id="issue_type" name="issue_type" required value="{{ form_data['issue_type'] if form_data and 'issue_type' in form_data else '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="clone_models" class="form-label">Clone Models (공백구분)</label>
+            <input type="text" class="form-control" id="clone_models" name="clone_models" required value="{{ ' '.join(form_data['clone_models']) if form_data and 'clone_models' in form_data and form_data['clone_models'] is iterable and not string and form_data['clone_models'] else (form_data['clone_models'] if form_data and 'clone_models' in form_data else '') }}">
+        </div>
+        <div class="mb-3">
+            <label for="parent_key" class="form-label">Parent Key (선택)</label>
+            <input type="text" class="form-control" id="parent_key" name="parent_key" value="{{ form_data['parent_key'] if form_data and 'parent_key' in form_data else '' }}">
+        </div>
+        <button type="submit" class="btn btn-primary">검색</button>
+    </form>
+</div>
+</body>
+</html>

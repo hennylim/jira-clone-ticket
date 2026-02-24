@@ -6,5 +6,6 @@
         "HP920_SYNC"
     ],
     "due_date": "2025-08-29",
-    "issue_type": "Bug"
+    "issue_type": "Bug",
+    "clone_models": ["HP920"]
 }

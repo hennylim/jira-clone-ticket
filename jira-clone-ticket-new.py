@@ -146,6 +146,73 @@ def select_jira_ticket(jira_client, issues):
     
     return selected_issues  
 
+def get_jira_client(env_path=None):
+    if env_path:
+        load_dotenv(dotenv_path=env_path)
+    else:
+        load_dotenv()
+
+    # 환경 변수 불러오기
+    base_url = os.getenv("JIRA_BASE_URL")
+    email = os.getenv("JIRA_EMAIL")
+    api_token = os.getenv("JIRA_API_TOKEN")
+
+    if not all([base_url, email, api_token]):
+        raise ValueError("환경변수 JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN이 누락되었습니다.")
+
+    return JiraClient.JiraClient(base_url, email, api_token)
+
+def process_due_date_str(due_date):
+    if not due_date:
+        return due_date
+        
+    if due_date.endswith('W'):
+        due_date_tmp = due_date[:-1]
+        if int(due_date_tmp) > 0:
+            from datetime import datetime, timedelta
+            return (datetime.now() + timedelta(weeks=int(due_date_tmp))).strftime('%Y-%m-%d')
+    elif due_date.endswith('D'):
+        due_date_tmp = due_date[:-1]
+        if int(due_date_tmp) > 0:
+            from datetime import datetime, timedelta
+            return (datetime.now() + timedelta(days=int(due_date_tmp))).strftime('%Y-%m-%d')
+    return due_date
+
+def search_issues(jira_client, jql=None, issue_key=None):
+    if issue_key:
+        issue = jira_client.get_issue(issue_key)
+        return [issue] if issue else []
+    elif jql:
+        return jira_client.search_issues_excpt_head_by_jql(jql, 'Clone-')
+    return []
+
+def perform_clone(jira_client, selected_issues, clone_project_key, issue_type, due_date, clone_label, clone_models, parent_key):
+    results = []
+    for issue in selected_issues:
+        summary, description, org_key = make_clone_summary_description(jira_client, issue)
+        
+        # 동일한 summary를 가진 티켓이 있는지 검사
+        existing_issues = jira_client.search_issues_by_summary(clone_project_key, summary)
+        if existing_issues:
+            results.append({"issue": org_key, "status": "skipped", "message": f"동일한 summary를 가진 티켓이 이미 존재합니다.", "summary": summary})
+            continue
+            
+        new_issue_key = jira_client.clone_issue_with_media_upload(
+                            source_issue_key=org_key,
+                            project_key=clone_project_key,
+                            summary=summary,
+                            issue_type=issue_type,
+                            due_date=due_date,
+                            labels=clone_label,
+                            models=clone_models,
+                            parent_key=parent_key
+                        )
+        if not new_issue_key:
+            results.append({"issue": org_key, "status": "failed", "message": "생성 실패", "summary": summary})
+            continue
+        results.append({"issue": org_key, "status": "success", "new_issue_key": new_issue_key, "summary": summary})
+    return results
+
 
 if __name__ == "__main__":
     # 인자 파싱
@@ -162,7 +229,6 @@ if __name__ == "__main__":
     # Single issue clone mode: provide a single issue key
     parser.add_argument('-k', '--issue_key', type=str, help='단일 원본 이슈 키 (예: PROJ-123)')
     parser.add_argument('-pk', '--parent_key', type=str, help='상위 이슈 키 (예: PROJ-123)')
-
 
     args = parser.parse_args()
 
@@ -202,23 +268,7 @@ if __name__ == "__main__":
             clone_models = [label for label in clone_models.split() if label]
     parent_key = args.parent_key if args.parent_key else config.get('parent_key')
 
-    # due_date가 숫자+W 경우 숫자와 문자를 분리
-    due_date_tmp = 0
-    
-    if due_date and due_date[-1] == 'W':
-        due_date_tmp = due_date[:-1]        
-        
-        # 입력받은 due_date_tmp 가 0 보다 큰 경우 오늘 날자로 부터 due_date_tmp week 만큼 뒤의 날자를 due_date에 대입.
-        if int(due_date_tmp) > 0:
-            from datetime import datetime, timedelta
-            due_date = (datetime.now() + timedelta(weeks=int(due_date_tmp))).strftime('%Y-%m-%d')
-    elif due_date and due_date[-1] == 'D': #D는 날자
-        due_date_tmp = due_date[:-1]
-
-        # 입력받은 due_date_tmp 가 0 보다 큰 경우 오늘 날자로 부터 due_date_tmp day 만큼 뒤의 날자를 due_date에 대입.
-        if int(due_date_tmp) > 0:
-            from datetime import datetime, timedelta
-            due_date = (datetime.now() + timedelta(days=int(due_date_tmp))).strftime('%Y-%m-%d')
+    due_date = process_due_date_str(due_date)
 
     # 필수 설정 검증 (병합 후)
     missing = []
@@ -246,78 +296,41 @@ if __name__ == "__main__":
         print(f"지정된 .env 파일이 존재하지 않습니다: {env_path}")
         sys.exit(1)
 
-    load_dotenv(dotenv_path=env_path)
-
-    # 환경 변수 불러오기
-    base_url = os.getenv("JIRA_BASE_URL")
-    email = os.getenv("JIRA_EMAIL")
-    api_token = os.getenv("JIRA_API_TOKEN")
-
-    if not all([base_url, email, api_token]):
-        print("환경변수 JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN이 누락되었습니다.")
+    try:
+        jira_client = get_jira_client(env_path)
+    except Exception as e:
+        print(f"오류: {e}")
         sys.exit(1)
 
-    # Jira 클라이언트 인스턴스 생성
-    jira_client = JiraClient.JiraClient(base_url, email, api_token)
     selected_issues = []
     if issue_key:
-        # Single issue clone mode
         print(f"단일 이슈 키로 클론을 진행합니다: {issue_key}")
-        issue = jira_client.get_issue(issue_key)
-        if not issue:
+        selected_issues = search_issues(jira_client, issue_key=issue_key)
+        if not selected_issues:
             print(f"지정된 이슈를 찾을 수 없습니다: {issue_key}")
             sys.exit(1)
-        selected_issues = [issue]
     else:
-        # JQL search mode
-        issues = jira_client.search_issues_excpt_head_by_jql(jql, 'Clone-')
+        issues = search_issues(jira_client, jql=jql)
         print(f"검색된 티켓 수: {len(issues)}")
-
-        #검색된 티켓이 없을 경우 종료
-        if len(issues) == 0:
+        if not issues:
             sys.exit(0)
-        
         selected_issues = select_jira_ticket(jira_client, issues)
-        
-        #선택된 티켓이 없을경우 종료
-        if len(selected_issues) == 0:
+        if not selected_issues:
             sys.exit(0)
 
     print("--------------------------------")
-    #사용자에게 생성 여부를 물어본다. 
     create_ticket = input("생성하시겠습니까? (y/n): ")
     if create_ticket == "y":
         print("생성을 시작합니다.")
-        for issue in selected_issues:
-            summary, description, org_key = make_clone_summary_description(jira_client, issue)
-            
-            # 동일한 summary를 가진 티켓이 있는지 검사
-            print("동일한 summary를 가진 티켓이 있는지 검사...")
-            print(f"summary: {summary}")
-            existing_issues = jira_client.search_issues_by_summary(clone_project_key, summary)
-            if existing_issues:
-                print(f"Warning: {summary} - {org_key} 와 동일한 summary를 가진 티켓이 이미 존재합니다. 생성을 건너뜁니다.")
-                continue
-                
-            print(f"{summary} - {org_key} 생성중...")
-            new_issue_key = jira_client.clone_issue_with_media_upload(
-                                source_issue_key=org_key,
-                                project_key=clone_project_key,
-                                summary=summary,
-                                issue_type=issue_type,
-                                due_date=due_date,
-                                labels=clone_label,
-                                models=clone_models,
-                                parent_key=parent_key
-                            )
-            if not new_issue_key:
-                print(f"Warning: {summary} - {org_key} 생성 실패")
-                continue
-            print(f"{summary} - {org_key} 생성 완료")
-
-
-
+        results = perform_clone(jira_client, selected_issues, clone_project_key, issue_type, due_date, clone_label, clone_models, parent_key)
+        for res in results:
+            if res["status"] == "skipped":
+                print(f"Warning: {res['summary']} - {res['issue']} 와 {res['message']} 생성을 건너뜁니다.")
+            elif res["status"] == "failed":
+                print(f"Warning: {res['summary']} - {res['issue']} {res['message']}")
+            else:
+                print(f"{res['summary']} - {res['issue']} 생성 완료 ({res['new_issue_key']})")
     else:
         print("생성을 취소합니다.")
-        sys.exit(0) 
+        sys.exit(0)
     

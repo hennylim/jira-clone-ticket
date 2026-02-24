@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jira Clone Ticket Web UI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Jira Clone Tool</h1>
+            <p class="subtitle">Search and clone Jira tickets with ease</p>
+        </header>
+
+        <main>
+            <section class="config-section">
+                <h2>1. Configuration</h2>
+                <div class="card">
+                    <p class="card-hint">Customize parameters below. You can also upload a JSON file or load the
+                        example.</p>
+                    <div id="config-form" class="config-grid">
+                        <!-- Form fields will be dynamically generated here -->
+                    </div>
+                    <input type="file" id="file-input" accept=".json" class="hidden">
+                    <div class="button-group">
+                        <button id="save-config-btn" class="btn btn-secondary">Save Config</button>
+                        <button id="load-file-btn" class="btn btn-secondary">Upload Config</button>
+                        <button id="load-example" class="btn btn-secondary">Load Example</button>
+                        <button id="search-btn" class="btn btn-primary">Search Issues</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="results-section" class="results-section hidden">
+                <h2>2. Select Issues</h2>
+                <div class="card">
+                    <div id="issue-list-container">
+                        <table id="issue-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select-all"></th>
+                                    <th>Key</th>
+                                    <th>Summary</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="issue-body">
+                                <!-- Issues will be listed here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="button-group">
+                        <button id="clone-btn" class="btn btn-primary">Clone Selected</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="progress-section" class="progress-section hidden">
+                <h2>3. Progress</h2>
+                <div class="card">
+                    <div id="progress-log" class="log-view">
+                        <!-- Progress messages will appear here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
