@@ -1,10 +1,8 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 import json
 import os
-import argparse
 from pathlib import Path
 import uvicorn
 from typing import List, Optional
@@ -22,15 +20,6 @@ sys.modules["jira_clone_tool"] = jira_clone_tool
 spec.loader.exec_module(jira_clone_tool)
 
 app = FastAPI(title="Jira Clone Ticket Web UI")
-
-# Add CORS middleware to allow external access
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Models for API
 class SearchRequest(BaseModel):
@@ -66,7 +55,7 @@ async def search(request: SearchRequest):
                 "summary": issue.get("fields", {}).get("summary"),
                 "status": issue.get("fields", {}).get("status", {}).get("name")
             })
-        return {"issues": formatted_issues}
+        return {"issues": formatted_issues, "base_url": jira_client.base_url}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -110,7 +99,7 @@ async def clone(request: CloneRequest):
             clone_models, 
             parent_key
         )
-        return {"results": results}
+        return {"results": results, "base_url": jira_client.base_url}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -145,10 +134,4 @@ async def get_index():
     return "<h1>Jira Clone Tool Web UI</h1><p>Frontend files missing. Please create static/index.html</p>"
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Jira Clone Ticket Web UI")
-    parser.add_argument('--host', type=str, default="0.0.0.0", help="Host address to bind to")
-    parser.add_argument('--port', type=int, default=8000, help="Port to listen on")
-    args = parser.parse_args()
-    
-    print(f"Server starting on http://{args.host}:{args.port}")
-    uvicorn.run(app, host=args.host, port=args.port)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

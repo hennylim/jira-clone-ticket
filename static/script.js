@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cloneBtn = document.getElementById('clone-btn');
     const progressSection = document.getElementById('progress-section');
     const progressLog = document.getElementById('progress-log');
+    let jiraBaseUrl = '';
 
     const configSchema = [
         { key: 'jql', label: 'JQL Query', type: 'text', fullWidth: true },
@@ -152,7 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            displayIssues(data.issues);
+            jiraBaseUrl = data.base_url;
+            displayIssues(data.issues, jiraBaseUrl);
         } catch (error) {
             alert('Error: ' + error.message);
         } finally {
@@ -161,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function displayIssues(issues) {
+    function displayIssues(issues, baseUrl) {
         issueBody.innerHTML = '';
         if (issues.length === 0) {
             issueBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No issues found.</td></tr>';
@@ -169,10 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             issues.forEach(issue => {
                 const tr = document.createElement('tr');
+                const jiraLink = baseUrl ? `${baseUrl.replace(/\/$/, '')}/browse/${issue.key}` : '#';
                 tr.innerHTML = `
                     <td><input type="checkbox" class="issue-checkbox" value="${issue.key}"></td>
-                    <td>${issue.key}</td>
-                    <td>${issue.key} - ${issue.summary}</td>
+                    <td><a href="${jiraLink}" target="_blank" class="jira-link">${issue.key}</a></td>
+                    <td><a href="${jiraLink}" target="_blank" class="jira-link">${issue.key} - ${issue.summary}</a></td>
                     <td><span class="status-tag">${issue.status}</span></td>
                 `;
                 issueBody.appendChild(tr);
@@ -224,18 +227,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
+            if (data.base_url) jiraBaseUrl = data.base_url;
+            const baseUrl = jiraBaseUrl.replace(/\/$/, '');
+
             data.results.forEach(res => {
                 const entry = document.createElement('div');
                 entry.className = 'log-entry';
+                const orgLink = `${baseUrl}/browse/${res.issue}`;
+                const newLink = res.new_issue_key ? `${baseUrl}/browse/${res.new_issue_key}` : '#';
+
                 if (res.status === 'success') {
                     entry.classList.add('log-success');
-                    entry.textContent = `[SUCCESS] ${res.summary} - ${res.issue} cloned as ${res.new_issue_key}`;
+                    entry.innerHTML = `[SUCCESS] ${res.summary} - <a href="${orgLink}" target="_blank" class="jira-link-log">${res.issue}</a> cloned as <a href="${newLink}" target="_blank" class="jira-link-log">${res.new_issue_key}</a>`;
                 } else if (res.status === 'skipped') {
                     entry.classList.add('log-warning');
-                    entry.textContent = `[SKIPPED] ${res.summary} - ${res.issue}: ${res.message}`;
+                    entry.innerHTML = `[SKIPPED] ${res.summary} - <a href="${orgLink}" target="_blank" class="jira-link-log">${res.issue}</a>: ${res.message}`;
                 } else {
                     entry.classList.add('log-error');
-                    entry.textContent = `[FAILED] ${res.summary} - ${res.issue}: ${res.message}`;
+                    entry.innerHTML = `[FAILED] ${res.summary} - <a href="${orgLink}" target="_blank" class="jira-link-log">${res.issue}</a>: ${res.message}`;
                 }
                 progressLog.appendChild(entry);
                 progressLog.scrollTop = progressLog.scrollHeight;
