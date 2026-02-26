@@ -16,23 +16,47 @@
 <body>
     <div class="container">
         <header>
-            <h1>Jira Clone Tool</h1>
-            <p class="subtitle">Search and clone Jira tickets with ease</p>
+            <div class="header-main">
+                <div class="header-text">
+                    <h1>Jira Clone Tool</h1>
+                    <p class="subtitle">Search and clone Jira tickets with ease</p>
+                </div>
+                <div id="auth-container" class="auth-container">
+                    <div id="user-display" class="user-display hidden">
+                        <span id="username-span"></span>
+                        <a href="/profile.html" class="btn btn-secondary btn-sm">Profile</a>
+                        <button id="logout-btn" class="btn btn-secondary btn-sm hidden">Logout</button>
+                    </div>
+                </div>
         </header>
 
-        <main>
+        <!-- Main App Content -->
+        <main id="app-content">
             <section class="config-section">
                 <h2>1. Configuration</h2>
                 <div class="card">
+                    <div id="presets-container" class="presets-container hidden">
+                        <label for="config-presets">Saved Presets:</label>
+                        <select id="config-presets">
+                            <option value="">-- Select a preset --</option>
+                        </select>
+                        <button id="update-db-btn" class="btn btn-secondary btn-sm" disabled>Update</button>
+                        <button id="delete-db-btn" class="btn btn-danger btn-sm">Delete</button>
+                    </div>
                     <p class="card-hint">Customize parameters below. You can also upload a JSON file or load the
                         example.</p>
                     <div id="config-form" class="config-grid">
                         <!-- Form fields will be dynamically generated here -->
                     </div>
+                    <div class="db-save-container">
+                        <input type="text" id="config-name" placeholder="Configuration Name (e.g. Daily Sync)"
+                            class="form-input">
+                        <button id="save-db-btn" class="btn btn-secondary">Save to DB</button>
+                    </div>
                     <input type="file" id="file-input" accept=".json" class="hidden">
                     <div class="button-group">
-                        <button id="save-config-btn" class="btn btn-secondary">Save Config</button>
-                        <button id="load-file-btn" class="btn btn-secondary">Upload Config</button>
+                        <button id="save-config-btn" class="btn btn-secondary">Download JSON</button>
+                        <button id="load-file-btn" class="btn btn-secondary">Upload JSON</button>
                         <button id="load-example" class="btn btn-secondary">Load Example</button>
                         <button id="search-btn" class="btn btn-primary">Search Issues</button>
                     </div>

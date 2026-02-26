@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Jira Ticket Copier</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div class="container container-sm">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">J</div>
+                    <h1>User Profile</h1>
+                </div>
+                <div class="user-controls">
+                    <a href="/" class="btn btn-secondary btn-sm">Back to Main</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="card">
+            <div class="card-header">
+                <h2>Account & Jira Settings</h2>
+            </div>
+            <div class="card-body">
+                <form id="profile-form">
+                    <div class="form-group full-width">
+                        <label for="profile-username">Username</label>
+                        <input type="text" id="profile-username" disabled>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profile-jira-url">Jira Base URL</label>
+                            <input type="url" id="profile-jira-url" placeholder="https://your-domain.atlassian.net"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-jira-email">Jira Email</label>
+                            <input type="email" id="profile-jira-email" placeholder="email@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="profile-jira-token">Jira API Token (Leave blank to keep current)</label>
+                        <input type="password" id="profile-jira-token" placeholder="Enter new API token">
+                    </div>
+
+                    <hr class="separator">
+
+                    <div class="card-header" style="padding-left: 0; padding-top: 0;">
+                        <h3>Change Password</h3>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="profile-new-password">New Password (Leave blank to keep current)</label>
+                        <input type="password" id="profile-new-password" placeholder="Enter new password">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="profile-confirm-password">Confirm New Password</label>
+                        <input type="password" id="profile-confirm-password" placeholder="Confirm new password">
+                    </div>
+
+                    <hr class="separator">
+
+                    <div class="form-group full-width">
+                        <label for="profile-current-password" class="required-field">Current Password (Required to save
+                            changes)</label>
+                        <input type="password" id="profile-current-password" placeholder="Verify your current password"
+                            required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="save-profile-btn" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script src="/static/profile.js"></script>
+</body>
+
+</html>

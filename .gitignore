@@ -6,3 +6,4 @@ lib/
 var/
 __pycache__/
 .vscode/
+.db

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Jira Clone Tool</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-main">
+                <div class="header-text">
+                    <h1>Jira Clone Tool</h1>
+                    <p class="subtitle">Search and clone Jira tickets with ease</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Landing Page Section -->
+        <div id="landing-content" class="landing-section">
+            <div class="card landing-card">
+                <h2>Welcome to Jira Clone Tool</h2>
+                <p class="card-hint">Please login or register to continue.</p>
+
+                <div id="auth-forms">
+                    <!-- Login Form -->
+                    <form id="login-form-landing" class="auth-form">
+                        <div class="form-group">
+                            <label for="login-username-landing">Username</label>
+                            <input type="text" id="login-username-landing" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password-landing">Password</label>
+                            <input type="password" id="login-password-landing" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary full-width">Login</button>
+                        <p class="auth-switch">Don't have an account? <a href="#" id="show-register">Register</a></p>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="register-form-landing" class="auth-form hidden">
+                        <div class="form-group">
+                            <label for="reg-username-landing">Username</label>
+                            <input type="text" id="reg-username-landing" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-password-landing">Password</label>
+                            <input type="password" id="reg-password-landing" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-jira-url-landing">Jira Base URL</label>
+                            <input type="url" id="reg-jira-url-landing" placeholder="https://your-domain.atlassian.net"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-jira-email-landing">Jira Email</label>
+                            <input type="email" id="reg-jira-email-landing" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-jira-token-landing">Jira API Token</label>
+                            <input type="password" id="reg-jira-token-landing" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary full-width">Register</button>
+                        <p class="auth-switch">Already have an account? <a href="#" id="show-login">Login</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

@@ -30,17 +30,76 @@ body {
     margin: 0 auto;
 }
 
-header {
-    text-align: center;
+.header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 40px;
+    gap: 20px;
 }
 
-h1 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 700;
+.header-text {
+    text-align: left;
+}
+
+.auth-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-display {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+#username-span {
     color: var(--primary);
-    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(9, 30, 66, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    padding: 32px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 12px 24px rgba(9, 30, 66, 0.2);
+    position: relative;
+}
+
+.modal-content h2 {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--text-sub);
+    cursor: pointer;
+}
+
+.close:hover {
+    color: var(--text-main);
 }
 
 .subtitle {
@@ -89,6 +148,9 @@ h2 {
 }
 
 .form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="url"],
+.form-group input[type="email"],
 .form-group input[type="number"],
 .form-group select {
     padding: 10px 12px;
@@ -97,6 +159,7 @@ h2 {
     font-size: 0.95rem;
     transition: border-color 0.2s;
     font-family: 'Inter', sans-serif;
+    width: 100%;
 }
 
 .form-group input:focus,
@@ -142,6 +205,42 @@ h2 {
 
 .btn-secondary:hover {
     background-color: var(--border-color);
+}
+
+.btn-danger {
+    background-color: var(--error);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+}
+
+.separator {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 24px 0;
+}
+
+.container-sm {
+    max-width: 600px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.required-field::after {
+    content: " *";
+    color: var(--danger-color);
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
 }
 
 .hidden {
@@ -230,4 +329,87 @@ input[type="checkbox"] {
 
 .jira-link-log:hover {
     opacity: 0.8;
+}
+
+.landing-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.landing-card {
+    max-width: 500px;
+    width: 100%;
+}
+
+.auth-form {
+    margin-top: 24px;
+}
+
+.auth-switch {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-sub);
+}
+
+.auth-switch a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+.btn.full-width {
+    width: 100%;
+    display: block;
+}
+
+/* Modal and General Overrides */
+.full-width {
+    width: 100%;
+}
+
+/* Config Presets */
+.presets-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.presets-container label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-sub);
+    white-space: nowrap;
+}
+
+.presets-container select {
+    flex: 1;
+    min-width: 200px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.db-save-container {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.db-save-container input {
+    flex: 1;
 }
