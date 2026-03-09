@@ -1,8 +1,10 @@
 from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
+from pathlib import Path
 
 Base = declarative_base()
+current_dir = Path(__file__).parent
 
 class User(Base):
     __tablename__ = 'users'
@@ -27,7 +29,7 @@ class Configuration(Base):
     # Relationship to user
     user = relationship("User", back_populates="configurations")
 
-engine = create_engine('sqlite:///jira_clone.db')
+engine = create_engine(f'sqlite:///{current_dir}/jira_clone.db')
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def init_db():
